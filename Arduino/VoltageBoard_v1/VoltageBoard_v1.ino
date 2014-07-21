@@ -30,10 +30,9 @@ MilliTimer debug_timer;
 MilliTimer voltage_flash;
 
 // Setup the analog readers
-volatile unsigned long v12 = 0;
-volatile unsigned long v5 = 0;
-volatile unsigned long v33 = 0;
-volatile unsigned long vin = 0;
+const float alpha = 0.5;
+unsigned long r_v12, r_v5, r_v33, r_vin;
+volatile unsigned long v12, v5, v33, vin;
 volatile int percent = 0;
 
 void setup() {

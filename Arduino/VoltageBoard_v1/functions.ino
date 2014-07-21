@@ -1,19 +1,26 @@
 void readVoltages() {
   analogRead(AVIN);
   delay(5);
-  vin = ((analogRead(AVIN) * (1100/1023.0))) / CAL_VIN;
+  r_vin = ((analogRead(AVIN) * (1100/1023.0))) / CAL_VIN;
   
   analogRead(A12V);
   delay(5);
-  v12 = ((analogRead(A12V) * (1100/1023.0))) / CAL_V12;
+  r_v12 = ((analogRead(A12V) * (1100/1023.0))) / CAL_V12;
   
   analogRead(A5V);
   delay(5);
-  v5 = ((analogRead(A5V) * (1100/1023.0))) / CAL_V5;
+  r_v5 = ((analogRead(A5V) * (1100/1023.0))) / CAL_V5;
   
   analogRead(A33V);
   delay(5);
-  v33 = ((analogRead(A33V) * (1100/1023.0))) / CAL_V33;
+  r_v33 = ((analogRead(A33V) * (1100/1023.0))) / CAL_V33;
+  
+  // Low-pass filter    
+  vin = r_vin * alpha + (vin * (1.0 - alpha));
+  v12 = r_v12 * alpha + (v12 * (1.0 - alpha));
+  v5 = r_v5 * alpha + (v5 * (1.0 - alpha));
+  v33 = r_v33 * alpha + (v33 * (1.0 - alpha));
+  
 }
 
 void outputVoltage() { 
