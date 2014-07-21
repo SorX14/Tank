@@ -10,3 +10,9 @@ The controller board uses the much more powerful Teensy 3.1 which does all of th
 
 It can be controlled with a normal RC transmitter, or using a radio linked to a PC. GPS coordinates can also be loaded into the tank to allow autonomous operation.
 
+### PCB ###
+Each PCB has its own readme in the seperate directories. All PCBs were ordered through [OSHPark](https://oshpark.com/) and they took 1 week to arrive once they're made by the fab house.
+
+
+
+
