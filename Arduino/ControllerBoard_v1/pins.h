@@ -17,4 +17,6 @@
 #define RC3PIN 15
 #define RC4PIN 14
 
+#define RESET 31
+
 #endif

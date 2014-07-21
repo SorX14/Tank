@@ -27,9 +27,17 @@ unsigned long v33 = 0;
 int percent = 0;
 
 // IMU
-double acc_x, acc_y, acc_z;
-int16_t com_x, com_y, com_z;
-float heading;
+int16_t com_x, com_y, com_z;     // Compass values
+const float com_alpha = 0.5;     // Compass low-pass filter
+double fcom_x, fcom_y, fcom_z;    // Filtered compass values
+
+double acc_x, acc_y, acc_z;      // Accelerometer values
+const float acc_alpha = 0.5;     // Acc low-pass filter 
+double facc_x, facc_y, facc_z;   // Filtered accelerometer values
+
+float heading_nc, heading;       // Compass heading
+double roll_r, pitch_r;           // Roll/pitch radians
+double roll, pitch;              // Calculated roll and pitch
 
 // IMU timers as to when data was last acquired
 unsigned long acc_millis, gyro_millis, compass_millis;

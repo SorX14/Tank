@@ -106,6 +106,7 @@ void loop() {
     // Get the IMU data
     getAccelerometer();
     getCompass();
+    getHeading();
   }
  
   if (oled_timer.poll(100)) {
