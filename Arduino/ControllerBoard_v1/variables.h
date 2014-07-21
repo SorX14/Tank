@@ -16,10 +16,6 @@ uint16_t channel2_start;
 uint16_t channel3_start;
 uint16_t channel4_start;
 
-// ESC values
-int esc_left = 0;
-int esc_right = 0;
-
 // Which devices we have comms with
 bool hasComms[3];
 
@@ -28,17 +24,14 @@ unsigned long vin = 0;
 unsigned long v12 = 0;
 unsigned long v5 = 0;
 unsigned long v33 = 0;
+int percent = 0;
 
-// Compass
-int x_direction, y_direction, z_direction = 0;
-unsigned long compass_time = 0;
+// IMU
+double acc_x, acc_y, acc_z;
+int16_t com_x, com_y, com_z;
+float heading;
 
-// Accelerometer
-double x_angle, y_angle, z_angle;
-unsigned long accelerometer_time = 0;
-
-// Gyroscope
-double x_rate, y_rate, z_rate;
-unsigned long gyroscope_time = 0;
+// IMU timers as to when data was last acquired
+unsigned long acc_millis, gyro_millis, compass_millis;
 
 #endif

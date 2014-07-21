@@ -1,111 +1,97 @@
-// Set the compass up for continous measurement mode
-void setupCompass() {
-  Wire.beginTransmission(COMPASS);
-  Wire.write(0x02);
-  Wire.write(0x00);
-  Wire.endTransmission();
-}
-
-// Get the compass direction, and also attach the last read time
-void getCompass() {
-  // Tell the device where to begin reading data
-  Wire.beginTransmission(COMPASS);
-  Wire.write(0x03); // Select register 3, X MSB register
-  Wire.endTransmission();
-
-  // Read data from each axis, 2 registers per axis
-  Wire.requestFrom(COMPASS, 6);
-  if (6 <= Wire.available()) {
-    x_direction = Wire.read() << 8; // X MSB
-    x_direction |= Wire.read(); // X LSB
-
-    z_direction = Wire.read() << 8; // Z MSB
-    z_direction |= Wire.read(); // Z LSB
-
-    y_direction = Wire.read() << 8; // Y MSB
-    y_direction |= Wire.read(); // Y LSB
-  }
-
-  compass_time = millis();
-}
-
 void setupAccelerometer() {
-  Wire.beginTransmission(ACCELEROMETER);
-  Wire.write(0x2D);
-  Wire.write(8);
+  Wire.beginTransmission(ACC_ADDRESS);
+  Wire.write(0x2D); // ?
+  Wire.write(8); // Measure enable
   Wire.endTransmission();
 }
 
 void getAccelerometer() {
-  // Get the X axis
-  Wire.beginTransmission(ACCELEROMETER);
-  Wire.write(0x32); // X0
-  Wire.write(0x33); // X1
+  /////--------------------------------------- GET X AXIS
+  Wire.beginTransmission(ACC_ADDRESS);
+  Wire.write(0x32);
   Wire.endTransmission();
-  Wire.requestFrom(ACCELEROMETER, 2);
+  
+  Wire.requestFrom(ACC_ADDRESS, 2);
+  int16_t X_out;
   if (Wire.available() <= 2) {
-    x_angle = Wire.read() + (Wire.read() << 8);
+    X_out = (int16_t) (Wire.read() | (Wire.read() << 8));
+  }
+  
+  /////--------------------------------------- GET Y AXIS
+  Wire.beginTransmission(ACC_ADDRESS);
+  Wire.write(0x34);
+  Wire.endTransmission();
+  
+  Wire.requestFrom(ACC_ADDRESS, 2);
+  int16_t Y_out;
+  if (Wire.available() <= 2) {
+    Y_out = (int16_t) (Wire.read() | (Wire.read() << 8));
+  }
+  
+  /////--------------------------------------- GET Z AXIS
+  Wire.beginTransmission(ACC_ADDRESS);
+  Wire.write(0x36);
+  Wire.endTransmission();
+  
+  Wire.requestFrom(ACC_ADDRESS, 2);
+  int16_t Z_out;
+  if (Wire.available() <= 2) {
+    Z_out = (int16_t) (Wire.read() | (Wire.read() << 8));
   }
 
-  // Get the Y axis
-  Wire.beginTransmission(ACCELEROMETER);
-  Wire.write(0x34); // Y0
-  Wire.write(0x35); // Y1
-  Wire.endTransmission();
-  Wire.requestFrom(ACCELEROMETER, 2);
-  if (Wire.available() <= 2) {
-    y_angle = Wire.read() + (Wire.read() << 8);
-  }
-
-  // Get the Z axis
-  Wire.beginTransmission(ACCELEROMETER);
-  Wire.write(0x36); // Z0
-  Wire.write(0x37); // Z1
-  Wire.endTransmission();
-  Wire.requestFrom(ACCELEROMETER, 2);
-  if (Wire.available() <= 2) {
-    z_angle = Wire.read() + (Wire.read() << 8);
-  }
-
-  // Output in g
-  x_angle /= 256.0;
-  y_angle /= 256.0;
-  z_angle /= 256.0;
-  accelerometer_time = millis();
+  // Calculate in G
+  acc_x = X_out / 256.0;  
+  acc_y = Y_out / 256.0;
+  acc_z = Z_out / 256.0;
+  
+  // Set the last read time
+  acc_millis = millis();
 }
 
-void setupGyroscope() {
-  // Setup normal power mode, all axis enabled
-  Wire.beginTransmission(GYROSCOPE);
-  Wire.write(0x20);
-  Wire.write(0x0F);
+void setupCompass() {
+  Wire.beginTransmission(COMPASS_ADDRESS);
+  Wire.send(0x02); // Select mode register
+  Wire.send(0x00); // Continuous measurement mode
   Wire.endTransmission();
 }
 
-void getGyroscope() {
-  // Start reading
-  Wire.beginTransmission(GYROSCOPE);
-  Wire.write(0x28 | (1 << 7));
+void getCompass() {
+  Wire.beginTransmission(COMPASS_ADDRESS);
+  Wire.send(0x03); //select register 3, X MSB register
   Wire.endTransmission();
-
-  // Request data from the gyroscope
-  Wire.requestFrom(GYROSCOPE, 6);
-
-  // Wait until we have 6 bytes in the buffer
-  while (Wire.available() < 6);
-
-  // Get each of the bytes
-  uint8_t xla = Wire.read();
-  uint8_t xha = Wire.read();
-  uint8_t yla = Wire.read();
-  uint8_t yha = Wire.read();
-  uint8_t zla = Wire.read();
-  uint8_t zha = Wire.read();
-
-  // Output in degrees / secs
-  x_rate = xha << 8 | xla;
-  y_rate = yha << 8 | yla;
-  z_rate = zha << 8 | zla;
-
-  gyroscope_time = millis();
+ 
+  Wire.requestFrom(COMPASS_ADDRESS, 6);
+  if( 6 <= Wire.available()){
+    com_x = (Wire.read() << 8) | Wire.read();
+    com_z = (Wire.read() << 8) | Wire.read();
+    com_y = (Wire.read() << 8) | Wire.read();
+  }
+  
+  // Calculate the heading
+  heading = atan2(com_y, com_x);
+  
+  // Once you have your heading, you must then add your 'Declination Angle', which is the 'Error' of the magnetic field in your location.
+  // Find yours here: http://www.magnetic-declination.com/
+  // Mine is: 2o 37' W, which is 2.617 Degrees, or (which we need) 0.0456752665 radians, I will use 0.0457
+  // If you cannot find your Declination, comment out these two lines, your compass will be slightly off.
+  //float declinationAngle = 0.0457;
+  
+  // Magnetic declination: -1° 52' WEST (GL22BD)
+  // -1 degrees 52 minutes to radians (Google to get radians conversion)
+  float declinationAngle = -0.0325794794;
+  heading += declinationAngle;
+  
+  // Correct for when we have negatives
+  if (heading < 0) {
+    heading += 2*PI;
+  }
+  if (heading > 2*PI) {
+    heading -= 2*PI;
+  }
+  
+  // Convert radians to degress
+  heading *= 180/M_PI;
+  
+  // Set the last read time
+  compass_millis = millis();
 }
