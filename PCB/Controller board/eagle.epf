@@ -1,0 +1,25 @@
+[Eagle]
+Version="06 05 00"
+Platform="Windows"
+Serial="62191E841E-LSR-WLM-1EL"
+Globals="Globals"
+Desktop="Desktop"
+
+[Globals]
+AutoSaveProject=1
+UsedLibrary="C:/Program Files (x86)/EAGLE-6.5.0/lbr/con-molex.lbr"
+UsedLibrary="C:/Users/Steve Parker/Google Drive/Eagle LBR/Ciseco Footprints.lbr"
+UsedLibrary="C:/Users/Steve Parker/Google Drive/Eagle LBR/Molex-8550x-xxxx.lbr"
+UsedLibrary="C:/Users/Steve Parker/Google Drive/Eagle LBR/SparkFun-Connectors.lbr"
+UsedLibrary="C:/Users/Steve Parker/Google Drive/Eagle LBR/Teensy_3_Series_Board_v1.0.lbr"
+UsedLibrary="C:/Users/Steve Parker/Google Drive/Eagle LBR/hobby-components.lbr"
+
+[Win_1]
+Type="Control Panel"
+Loc="367 160 1137 689"
+State=2
+Number=0
+
+[Desktop]
+Screen="5760 1080"
+Window="Win_1"

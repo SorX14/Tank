@@ -1,0 +1,40 @@
+[Eagle]
+Version="06 05 00"
+Platform="Mac OS X"
+Serial="62191E841E-LSR-WLM-1EL"
+Globals="Globals"
+Desktop="Desktop"
+
+[Globals]
+AutoSaveProject=1
+UsedLibrary="/Applications/EAGLE-6.5.0/lbr/led.lbr"
+UsedLibrary="/Applications/EAGLE-6.5.0/lbr/rcl.lbr"
+UsedLibrary="/Users/steve/Google Drive/Eagle LBR/Molex-8550x-xxxx.lbr"
+UsedLibrary="/Users/steve/Google Drive/Eagle LBR/SparkFun-Aesthetics.lbr"
+UsedLibrary="/Users/steve/Google Drive/Eagle LBR/SparkFun-AnalogIC.lbr"
+UsedLibrary="/Users/steve/Google Drive/Eagle LBR/SparkFun-Boards.lbr"
+UsedLibrary="/Users/steve/Google Drive/Eagle LBR/SparkFun-Capacitors.lbr"
+UsedLibrary="/Users/steve/Google Drive/Eagle LBR/SparkFun-Connectors.lbr"
+UsedLibrary="/Users/steve/Google Drive/Eagle LBR/SparkFun-DigitalIC.lbr"
+UsedLibrary="/Users/steve/Google Drive/Eagle LBR/SparkFun-DiscreteSemi.lbr"
+UsedLibrary="/Users/steve/Google Drive/Eagle LBR/SparkFun-Displays.lbr"
+UsedLibrary="/Users/steve/Google Drive/Eagle LBR/SparkFun-Electromechanical.lbr"
+UsedLibrary="/Users/steve/Google Drive/Eagle LBR/SparkFun-FreqCtrl.lbr"
+UsedLibrary="/Users/steve/Google Drive/Eagle LBR/SparkFun-LED.lbr"
+UsedLibrary="/Users/steve/Google Drive/Eagle LBR/SparkFun-Passives.lbr"
+UsedLibrary="/Users/steve/Google Drive/Eagle LBR/SparkFun-PowerIC.lbr"
+UsedLibrary="/Users/steve/Google Drive/Eagle LBR/SparkFun-RF.lbr"
+UsedLibrary="/Users/steve/Google Drive/Eagle LBR/SparkFun-Resistors.lbr"
+UsedLibrary="/Users/steve/Google Drive/Eagle LBR/SparkFun-Sensors.lbr"
+UsedLibrary="/Users/steve/Google Drive/Eagle LBR/Steve.lbr"
+UsedLibrary="/Users/steve/Google Drive/Eagle LBR/Teensy_3_Series_Board_v1.0.lbr"
+
+[Win_1]
+Type="Control Panel"
+Loc="190 171 1436 1054"
+State=2
+Number=0
+
+[Desktop]
+Screen="1920 1200"
+Window="Win_1"
