@@ -1,0 +1,28 @@
+## Controller board ##
+
+Connecting using the same RJ45 connector, this board has the 'brains' and radio modules for the tank.
+
+The brains are provided by a [Teensy 3.1](https://www.pjrc.com/teensy/teensy31.html) which is a powerful, compact microprocessor by PJRC. The footprint was provided by forum user **Constantin**, available [here](http://forum.pjrc.com/threads/24637-Updated-Teensy-3-1-and-Teensy-3-0-Eagle-libraries). The Teensy 3.1. has multiple SPI, I2C and serial connections which is really useful for debugging and interfacing with other modules. Most importantly, the Teensy 3.1 has an Arduino compatible IDE addon - [TeensyDuino](https://www.pjrc.com/teensy/teensyduino.html) - which makes writing code for it much more familiar.
+
+The radio is provided by an [ARF](http://shop.ciseco.co.uk/arf-high-power-radio-transceiver/) from Ciseco using their Eagle footprints. It could just as easily by an XRF, or XBEE as they are pin compatible.
+
+There is also a footprint for an [SSD1306 OLED 128x64 display](http://forum.hobbycomponents.com/viewtopic.php?f=39&t=1517) which **bernebeer** made. 
+
+The board also has a CR2032 battery holder footprint on the back which connects to the Teensy VBAT connection which keeps the built in RTC running.
+
+There is a 'GPS' header with selectable voltage output - either 3.3v or 5v. This header is just a connection to a serial port on the Teensy so could be used for other modules.
+
+The reset pad underneath the Teensy was designed to be soldered to one of the rectangular pads on the bottom of the Teensy. The Teensy can reset itself via software, so its possible to tri-state this pin; reading the status or sending a reset pulse to other modules.
+
+There are a couple of test points around the board for various voltages, or serial comms. There are 4 PWM pins available between the Teensy and the display.
+
+### Parts list ###
+
+- **Passives** - Not going to list them, all 0805 sized
+- **RJ45 connector** - Molex 85504-5001 - Farnell no: 2313732
+- **CR2032 holder** - Keystone 3 002 - RS Stock No: 219-7954
+- **Watch crystal** - FOX ELECTRONICS NC26LF-327 - Farnell no: 2064057 (needed for the Teensy 3.1 to keep the time)
+
+### Mistakes ###
+
+The GPS header has the wrong silkscreen on it, so the GND and VCC are reversed. Most GPS units can handle reverse voltage, but double-check.
