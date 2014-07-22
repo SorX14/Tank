@@ -159,7 +159,7 @@ void draw3D() {
   display.setTextSize(1);
   
   //display.print("X: ");
-  display.print(roll);
+  display.print(roll_r);
   display.print(" ");
-  display.print(pitch);
+  display.print(pitch_r);
 }

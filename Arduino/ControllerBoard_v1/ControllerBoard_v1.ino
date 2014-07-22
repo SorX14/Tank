@@ -22,6 +22,7 @@ Adafruit_SSD1306 display(OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
 MilliTimer i2c_timer;
 MilliTimer oled_timer;
 MilliTimer imu_timer;
+MilliTimer debug_timer;
 
 // Setup servos
 Servo left;
@@ -118,7 +119,7 @@ void loop() {
 		// Get the IMU data
 		getAccelerometer();
 		getCompass();
-		//getGPS();
+		getGPS();
 	
 		getPosition(); // Calculates heading, pitch and roll
 	}
@@ -127,5 +128,18 @@ void loop() {
 	if (oled_timer.poll(100)) {
 		// Update the screen
 		updateOLED();
+	}
+	
+	// Any debug operations
+	if (debug_timer.poll(500)) {
+		// Output the GPS situation
+		Serial.print("GPS Lng: ");
+		Serial.print(longitude, 6);
+		Serial.print(" Lat: ");
+		Serial.print(latitude, 6);
+		Serial.print(" Speed: ");
+		Serial.print(speed_mph);
+		Serial.print("MPH");
+		Serial.println();
 	}
 }

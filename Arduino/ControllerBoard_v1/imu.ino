@@ -30,7 +30,7 @@ void setupCompass() {
 
 void getAccelerometer() {
 	// Read 6 bytes from address 0x32, which is all of the axis information
-	uint8_t* buffer = readDevice(ACC_ADDRESS, 0x32, 6);
+	uint16_t* buffer = readDevice(ACC_ADDRESS, 0x32, 6);
 	acc_x = ((buffer[1] << 8) | buffer[0]) * g_scale;
 	acc_y = ((buffer[3] << 8) | buffer[2]) * g_scale;
 	acc_z = ((buffer[5] << 8) | buffer[4]) * g_scale;
@@ -68,8 +68,10 @@ void getPosition() {
   heading_nc = RadiansToDegreesMG(heading_nc);
 
   // We need both the compass and the accelerometer readings
-  roll_r = asin(facc_y);
-  pitch_r = asin(facc_x);
+  //roll_r = asin(facc_y);
+  //pitch_r = asin(facc_x);
+  roll_r = atan2(facc_y, facc_z);
+  pitch_r = atan2(facc_x, sqrt(facc_y * facc_y + facc_z * facc_z));
   
   // Convert radians to degrees
   roll = roll_r * (180 / PI);
@@ -104,7 +106,7 @@ uint8_t* readDevice (int I2CAddress, int address, int length) {
 	
 	Wire.requestFrom(I2CAddress, length);
 	
-	uint8_t buffer[length];
+	uint16_t buffer[length];
 	if (Wire.available() == length) {
 		for (uint8_t i = 0; i < length; i++) {
 			buffer[i] = Wire.read();

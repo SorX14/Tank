@@ -10,10 +10,12 @@ void getGPS() {
 		fix_age = gps.location.age();
 	}
 	
-	if (gps.time.isUpdated()) {
-		//gps.time.value();
+	if (gps.date.isUpdated() && gps.time.isUpdated()) {
+		// May as well update the RTC
+		setTime(gps.time.hours(), gps.time.minute(), gps.time.second(), gps.date.day(), gps.date.month(), gps.date.year());
 	}
-		
-		
-  }
+	
+	if (gps.speed.isUpdated()) {
+		speed_mph = gps.speed.mph();
+	}
 }
