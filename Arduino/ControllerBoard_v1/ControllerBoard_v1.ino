@@ -7,6 +7,7 @@
 #include <MilliTimer.h>
 #include <Servo.h> 
 #include <Time.h>
+#include "TinyGPS++.h"
 
 #include "pins.h"
 #include "variables.h"
@@ -26,6 +27,9 @@ MilliTimer imu_timer;
 Servo left;
 Servo right;
 
+// GPS
+TinyGPSPlus gps;
+
 // Various I2C device IDs
 #define VOLTAGE_DEVICE 5
 #define LEFT_LED_DEVICE 10
@@ -40,8 +44,9 @@ Servo right;
 #define RC_MAX 1900
 
 void setup() {
-  // Start the serial interface
+  // Start the serial interface for debug, and GPS
   Serial.begin(115200);
+  Serial3.begin(9600);
   
   // Start the I2C interface
   Wire.begin();
@@ -91,32 +96,36 @@ void setup() {
 
 
 void loop() {  
-  // Convert the RC channel values to 0-255 integers
-  int c1 = constrain(map(channel1, RC_MIN, RC_MAX, 0, 255), 0, 255);
-  int c2 = constrain(map(channel2, RC_MIN, RC_MAX, 0, 255), 0, 255);
-  int c3 = constrain(map(channel3, RC_MIN, RC_MAX, 0, 255), 0, 255);
-  int c4 = constrain(map(channel4, RC_MIN, RC_MAX, 0, 255), 0, 255);
- 
- // Communicate via I2C, and get the voltage from the voltage module
-  if (i2c_timer.poll(250)) {
-    // Get the voltage
-    getVoltage();
-  }
+	// Convert the RC channel values to 0-255 integers
+	int c1 = constrain(map(channel1, RC_MIN, RC_MAX, 0, 255), 0, 255);
+	int c2 = constrain(map(channel2, RC_MIN, RC_MAX, 0, 255), 0, 255);
+	int c3 = constrain(map(channel3, RC_MIN, RC_MAX, 0, 255), 0, 255);
+	int c4 = constrain(map(channel4, RC_MIN, RC_MAX, 0, 255), 0, 255);
   
-  // Communicate with the IMU, and calculate the vehicles current position
-  if (imu_timer.poll(100)) {
-    // Get the IMU data
-    getAccelerometer();
-    getCompass();
-	getGPS();
-	
-    getPosition(); // Calculates heading, pitch and roll
-  }
+	// Get GPS data
+	while (Serial3.available() > 0) {
+		gps.encode(Serial3.read());
+	}
  
-  // Update the OLED, with 100ms, there will be a 10Hz refresh rate
-  if (oled_timer.poll(100)) {
-    // Update the screen
-    updateOLED();
-  }
-
+	// Communicate via I2C, and get the voltage from the voltage module
+	if (i2c_timer.poll(250)) {
+		// Get the voltage
+		getVoltage();
+	}
+  
+	// Communicate with the IMU, and calculate the vehicles current position
+	if (imu_timer.poll(100)) {
+		// Get the IMU data
+		getAccelerometer();
+		getCompass();
+		//getGPS();
+	
+		getPosition(); // Calculates heading, pitch and roll
+	}
+ 
+	// Update the OLED, with 100ms, there will be a 10Hz refresh rate
+	if (oled_timer.poll(100)) {
+		// Update the screen
+		updateOLED();
+	}
 }
