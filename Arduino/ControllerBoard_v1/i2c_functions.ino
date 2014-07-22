@@ -23,12 +23,15 @@ void getAvailableDevices() {
   hasComms[0] = sendHeartbeatRequest(VOLTAGE_DEVICE);
   hasComms[1] = sendHeartbeatRequest(LEFT_LED_DEVICE);
   hasComms[2] = sendHeartbeatRequest(RIGHT_LED_DEVICE);
+  hasComms[3] = sendHeartbeatRequest(ACC_ADDRESS);
+  hasComms[4] = sendHeartbeatRequest(COMPASS_ADDRESS);
 
   outputCommsList();
 }
 
 void getVoltage() {
-  Wire.requestFrom(VOLTAGE_DEVICE, 28);  // Request 23 bytes from the voltage board
+	// I'm sure there are WAAAYYY more efficient ways of transferring data...
+  Wire.requestFrom(VOLTAGE_DEVICE, 28);  // Request 28 bytes from the voltage board
 
   long previous_millis = 0;
 

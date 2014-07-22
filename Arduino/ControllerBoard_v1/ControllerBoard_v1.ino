@@ -97,18 +97,23 @@ void loop() {
   int c3 = constrain(map(channel3, RC_MIN, RC_MAX, 0, 255), 0, 255);
   int c4 = constrain(map(channel4, RC_MIN, RC_MAX, 0, 255), 0, 255);
  
+ // Communicate via I2C, and get the voltage from the voltage module
   if (i2c_timer.poll(250)) {
     // Get the voltage
     getVoltage();
   }
   
+  // Communicate with the IMU, and calculate the vehicles current position
   if (imu_timer.poll(100)) {
     // Get the IMU data
     getAccelerometer();
     getCompass();
-    getHeading();
+	getGPS();
+	
+    getPosition(); // Calculates heading, pitch and roll
   }
  
+  // Update the OLED, with 100ms, there will be a 10Hz refresh rate
   if (oled_timer.poll(100)) {
     // Update the screen
     updateOLED();

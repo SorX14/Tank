@@ -17,7 +17,7 @@ uint16_t channel3_start;
 uint16_t channel4_start;
 
 // Which devices we have comms with
-bool hasComms[3];
+bool hasComms[6];
 
 // Voltages
 unsigned long vin = 0;
@@ -27,6 +27,10 @@ unsigned long v33 = 0;
 int percent = 0;
 
 // IMU
+
+float guass_scale = 0.92;		// Guass scaling
+float g_scale = 0.0039; 			// G scaling
+
 int16_t com_x, com_y, com_z;     // Compass values
 const float com_alpha = 0.5;     // Compass low-pass filter
 double fcom_x, fcom_y, fcom_z;    // Filtered compass values
@@ -37,7 +41,7 @@ double facc_x, facc_y, facc_z;   // Filtered accelerometer values
 
 float heading_nc, heading;       // Compass heading
 double roll_r, pitch_r;           // Roll/pitch radians
-double roll, pitch;              // Calculated roll and pitch
+double roll, pitch;              // Roll/pitch
 
 // IMU timers as to when data was last acquired
 unsigned long acc_millis, gyro_millis, compass_millis;
