@@ -17,6 +17,16 @@
 #define RC3PIN 15
 #define RC4PIN 14
 
-#define RESET 31
+#define RESET 27
+
+// Setup the DC brushless pins
+#define PWMA 5
+#define PWMB 6
+#define AIN2 23
+#define AIN1 22
+#define BIN1 21
+#define BIN2 20
+
+
 
 #endif

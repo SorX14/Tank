@@ -20,7 +20,6 @@ void readVoltages() {
   v12 = r_v12 * alpha + (v12 * (1.0 - alpha));
   v5 = r_v5 * alpha + (v5 * (1.0 - alpha));
   v33 = r_v33 * alpha + (v33 * (1.0 - alpha));
-  
 }
 
 void outputVoltage() { 

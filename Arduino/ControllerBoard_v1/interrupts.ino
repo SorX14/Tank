@@ -30,6 +30,11 @@ void RCchannel4 () {
   }
 }
 
+void resetTeensy() {
+  Serial.println("RESET TEENSY");
+  CPU_RESTART
+}
+
 // Debug
 void interruptDebug() {
   Serial.print("1: ");

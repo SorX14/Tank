@@ -30,74 +30,74 @@ MilliTimer debug_timer;
 MilliTimer voltage_flash;
 
 // Setup the analog readers
-const float alpha = 0.5;
+const float alpha = 0.1;
 unsigned long r_v12, r_v5, r_v33, r_vin;
-volatile unsigned long v12, v5, v33, vin;
-volatile int percent = 0;
+//volatile unsigned long v12, v5, v33, vin;
+volatile unsigned int v12, v5, v33, vin;
+volatile byte percent = 0;
 
 void setup() {
   Serial.begin(115200);
   delay(500);
-  
+
   // Setup analog read reference
   analogReference(INTERNAL);
-  
+
   // Setup all digital pins
   pinMode(I2CLED, OUTPUT);
   pinMode(BAT25, OUTPUT);
   pinMode(BAT50, OUTPUT);
   pinMode(BAT75, OUTPUT);
   pinMode(BAT100, OUTPUT);
-  
+
   // Setup up inputs
   pinMode(AVIN, INPUT);
   pinMode(A12V, INPUT);
   pinMode(A5V, INPUT);
   pinMode(A33V, INPUT);
-  
+
   // Start the I2C interface
   Wire.begin(I2CID);
   Wire.onRequest(requestEvent); // Runs a function when a request comes in
   Wire.onReceive(receiveEvent); // Runs a function when a receive comes in
-  
+
   Serial.println("VOLTAGE BOARD");
   Serial.print("Starting as ID: ");
   Serial.println(I2CID);
-  Serial.println("Waiting for I2C master...");
-  
-  // While we don't have comms, flash the LED
-  while (hascomms == 0) {
-    if (debug_timer.poll(200)) {
-      digitalWrite(I2CLED, !digitalRead(I2CLED));
-    }
-    
-    // Read the current voltages
-    readVoltages();
-    
-    // Output the voltage with the LEDs
-    outputVoltage();
-  }
-  
-  digitalWrite(I2CLED, HIGH);  
-  Serial.println("Found master!");
 }
 
 void loop() {
-    // Read the current voltages
-    readVoltages();
-    
-    // Output the voltage with the LEDs
-    outputVoltage();
+  // Read the current voltages
+  readVoltages();
+
+  // Output the voltage with the LEDs
+  outputVoltage();
+
+  // If we don't have I2C comms, flash the LED
+  if (hascomms == 0) {
+    if (debug_timer.poll(200)) {
+      digitalWrite(I2CLED, !digitalRead(I2CLED));
+    }
+  } else {
+    digitalWrite(I2CLED, HIGH);
+  }
 }
 
 void requestEvent() {
-  // Output VIN, 12v, 5v, 3.3v
-  if (hascomms) {
-    char vstring[28];
-    sprintf(vstring, "%05lu,%05lu,%05lu,%05lu,%03d", vin, v12, v5, v33, percent);
-    Serial.println(vstring);
-    Wire.write(vstring, 28);
-  }
+  // Output VIN, 12v, 5v, 3.3v and percent battery
+  byte sendBuffer[9];
+  
+  sendBuffer[0] = highByte(vin);
+  sendBuffer[1] = lowByte(vin);
+  sendBuffer[2] = highByte(v12);
+  sendBuffer[3] = lowByte(v12);
+  sendBuffer[4] = highByte(v5);
+  sendBuffer[5] = lowByte(v5);
+  sendBuffer[6] = highByte(v33);
+  sendBuffer[7] = lowByte(v33);
+  sendBuffer[8] = percent;
+
+  Wire.write(sendBuffer, 9);
 }
 
 void receiveEvent(int in_length) {
@@ -109,7 +109,7 @@ void receiveEvent(int in_length) {
     Serial.print("receiveEvent ");
     Serial.print(in_length);
     Serial.println("b:");
-    
+
     while (Wire.available()) {
       byte c = Wire.read();
       Serial.print((int) c);

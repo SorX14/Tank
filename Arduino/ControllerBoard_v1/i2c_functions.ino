@@ -29,57 +29,53 @@ void getAvailableDevices() {
   outputCommsList();
 }
 
-void getVoltage() {
-	// I'm sure there are WAAAYYY more efficient ways of transferring data...
-  Wire.requestFrom(VOLTAGE_DEVICE, 28);  // Request 28 bytes from the voltage board
-
-  long previous_millis = 0;
-
-  char vin_char[6];
-  char v12_char[6];
-  char v5_char[6];
-  char v33_char[6];
-  char percent_char[5];
-
-  int i = 0;
-  int p = 0;
-  while (Wire.available()) {
-    char c = Wire.read(); // receive a byte as character
-
-    // Reset p on each comma
-    if (c == ',') {
-      p = 0;
-      i++;
-      continue;
+void getVoltageSlim() {
+  // Only ask for the voltage if we can communicate with it
+  if (hasComms[0] == 1) {
+    Wire.requestFrom(VOLTAGE_DEVICE, 9);
+    char buffer[9];
+    int y = 0;
+    while (Wire.available()) {
+      byte c = Wire.read(); // receive a byte as character
+      buffer[y] = c;
+      y++;
     }
+    
+     vin = (buffer[0] << 8) | buffer[1];
+     v12 = (buffer[2] << 8) | buffer[3];
+     v5 = (buffer[4] << 8) | buffer[5];
+     v33 = (buffer[6] << 8) | buffer[7];
+     percent = (int) buffer[8];
+  }
+}
 
-    if (i < 5) {
-      vin_char[p] = c;
-      p++;
-      vin_char[p] = '\0';
-    } else if (i > 5 && i < 11) {
-      v12_char[p] = c;
-      p++;
-      v12_char[p] = '\0';
-    } else if (i > 11 && i < 17) {
-      v5_char[p] = c;
-      p++;
-      v5_char[p] = '\0';
-    } else if (i > 17 && i < 23) {
-      v33_char[p] = c;
-      p++;
-      v33_char[p] = '\0';
-    } else if (i > 23) {
-      percent_char[p] = c;
-      p++;
-      percent_char[p] = '\0';
+// Read a device after sending a data packet first
+uint8_t* readDevice (int I2CAddress, int address, int length) {
+  Wire.beginTransmission(I2CAddress);
+  Wire.write(address);
+  Wire.endTransmission();
+
+  return readDevice(I2CAddress, length);
+}
+
+// Read a device - now better matches the readVoltageSlim method
+uint8_t* readDevice (int I2CAddress, int length) {
+  Wire.requestFrom(I2CAddress, length);
+
+  uint8_t buffer[length];
+  if (Wire.available() == length) {
+    for (uint8_t i = 0; i < length; i++) {
+      buffer[i] = Wire.read();
     }
-    i++;
   }
 
-  vin = atol(vin_char);
-  v12 = atol(v12_char);
-  v5 = atol(v5_char);
-  v33 = atol(v33_char);
-  percent = atoi(percent_char);
+  return buffer;
+}
+
+// Write to a device
+void writeDevice (int I2CAddress, int address, int data) {
+  Wire.beginTransmission(I2CAddress);
+  Wire.write(address);
+  Wire.write(data);
+  Wire.endTransmission();
 }
