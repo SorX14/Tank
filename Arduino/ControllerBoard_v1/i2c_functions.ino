@@ -29,7 +29,7 @@ void getAvailableDevices() {
   outputCommsList();
 }
 
-void getVoltageSlim() {
+void getVoltage() {
   // Only ask for the voltage if we can communicate with it
   if (hasComms[0] == 1) {
     Wire.requestFrom(VOLTAGE_DEVICE, 9);
@@ -46,6 +46,14 @@ void getVoltageSlim() {
      v5 = (buffer[4] << 8) | buffer[5];
      v33 = (buffer[6] << 8) | buffer[7];
      percent = (int) buffer[8];
+	 
+	// Once we have the voltage, commit it to the XRF object
+	xrf.voltage.setV33(v33);
+	xrf.voltage.setV5(v5);
+	xrf.voltage.setV12(v12);
+	xrf.voltage.setVIN(vin);
+	xrf.voltage.setBatPercent(percent);
+	 
   }
 }
 

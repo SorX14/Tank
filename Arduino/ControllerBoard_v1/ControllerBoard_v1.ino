@@ -8,6 +8,7 @@
 #include <Servo.h>
 #include <Time.h>
 #include "TinyGPS++.h"
+#include "TankXRF.h"
 
 #define BRUSHED_DRIVE_METHOD 1
 
@@ -31,17 +32,20 @@ MilliTimer i2c_timer;
 MilliTimer oled_timer;
 MilliTimer imu_timer;
 MilliTimer debug_timer;
+MilliTimer xrf_timer;
 
 #if defined(BRUSHED_DRIVE_METHOD)
 #else
-  // Setup servos
-  Servo left;
-  Servo right;
+// Setup servos
+Servo left;
+Servo right;
 #endif 
-
 
 // GPS
 TinyGPSPlus gps;
+
+// TankXRF
+TankXRF xrf;
 
 // Various I2C device IDs
 #define VOLTAGE_DEVICE 5
@@ -62,7 +66,7 @@ void setup() {
   Serial1.begin(9600); // XRF
   Serial2.begin(9600); // Debug
   Serial3.begin(9600); // GPS
-  
+
   delay(1000);
   Serial.println("STARTING...");
 
@@ -88,26 +92,26 @@ void setup() {
   attachInterrupt(RC3PIN, RCchannel3, CHANGE);
   attachInterrupt(RC4PIN, RCchannel4, CHANGE);
 
-  #if defined(BRUSHED_DRIVE_METHOD)
-    Serial.println("Setting up brushed motor control");
-    pinMode(PWMA, OUTPUT);
-    pinMode(AIN2, OUTPUT);
-    pinMode(AIN1, OUTPUT);
-    pinMode(BIN2, OUTPUT);
-    pinMode(BIN1, OUTPUT);
-    pinMode(PWMB, OUTPUT);
-  #else
-    // Setup motors
-    Serial.println("Setting up ESC motor control");
-    left.attach(5);
-    right.attach(6);
-  #endif
+#if defined(BRUSHED_DRIVE_METHOD)
+  Serial.println("Setting up brushed motor control");
+  pinMode(PWMA, OUTPUT);
+  pinMode(AIN2, OUTPUT);
+  pinMode(AIN1, OUTPUT);
+  pinMode(BIN2, OUTPUT);
+  pinMode(BIN1, OUTPUT);
+  pinMode(PWMB, OUTPUT);
+#else
+  // Setup motors
+  Serial.println("Setting up ESC motor control");
+  left.attach(5);
+  right.attach(6);
+#endif
 
   // Setup the OLED display with a blank display
   display.begin();
   display.clearDisplay();
   display.display();
-  
+
   // Reset all connected devices
   resetI2CDevices();
 
@@ -133,40 +137,49 @@ void setup() {
 
 void loop() {
   ///////////////////// GET AND SET MOTOR DATA
-  conformRC();
-  if (c3 > 100) {
-    setLeft(c1);
-    setRight(c2);
+
+  if (control_mode == rc) { 
+    // RC control
+    conformRC();
+    if (c3 > 50) { // A toggle switch (0 = off, 255 = on)
+		setLeft(c1);
+		setRight(c2);
+    } else {
+      setLeft(0);
+      setRight(0);
+    }
   } else {
-    setLeft(128);
-    setRight(128);
-  } 
-    
+    // XRF control
+	setLeft(xrf.movement.incoming_left);
+	setRight(xrf.movement.incoming_right);
+  }
+
   ////////////////////// GET SERIAL DATA
- 
+
   // Get XRF data
   while (Serial1.available() > 0) {
     char x = Serial1.read();
-    //Serial.print(x);
   }
-  
+
+  /*
   // Get debug serial data
-  while (Serial2.available() > 0) {
-    char y = Serial2.read();
-    Serial.print(y);
-  }
-  
+   while (Serial2.available() > 0) {
+   char y = Serial2.read();
+   Serial.print(y);
+   }
+   */
+
   // Get GPS data
   while (Serial3.available() > 0) {
     gps.encode(Serial3.read());
   }
-  
+
   ////////////////////// GET SENSOR DATA
 
   // Communicate via I2C, and get the voltage from the voltage module
   if (i2c_timer.poll(250)) {
     // Get the voltage
-    getVoltageSlim();
+    getVoltage();
   }
 
   // Communicate with the IMU, and calculate the vehicles current position
@@ -178,16 +191,9 @@ void loop() {
 
     getPitchRoll(); // Calculate the pitch and roll which is needed for...
     getHeading(); // Calculating heading
-        
-    // Debug the heading
-//    Serial.print("Heading:\t");
-//    Serial.print(heading_nc);
-//    Serial.print(",");
-//    Serial.print(heading);
-//    Serial.print("\t");
-//    Serial.print(right_pwm_value);
-//    Serial.println();
   }
+
+  /////////////////////// UPDATE OLED
 
   // Update the OLED, with 100ms, there will be a 10Hz refresh rate
   if (oled_timer.poll(100)) {
@@ -200,5 +206,9 @@ void loop() {
 
   }
   
-
+  // Send the current status back to the base unit @ 40hz
+  if (xrf_timer.poll(25)) {  
+	xrf.send();
+  }
 }
+

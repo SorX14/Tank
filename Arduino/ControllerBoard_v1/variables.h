@@ -17,13 +17,19 @@ uint16_t channel3_start;
 uint16_t channel4_start;
 
 // Variables to hold the constrained RC values
+const float rc_alpha = 0.5; // Low-pass filter
 int c1, c2, c3, c4;
 
 // Motor variables
-int pwm_test;
-int pwm_mod = 1;
 int left_pwm_value;
 int right_pwm_value;
+
+// Control mode
+enum ControlTypes {
+	rc,
+	xrf
+};
+ControlTypes control_mode = rc;
 
 // Which devices we have comms with
 bool hasComms[6];

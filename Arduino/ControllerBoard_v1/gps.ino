@@ -8,6 +8,10 @@ void getGPS() {
     longitude = gps.location.lng();
     latitude = gps.location.lat();
     satellites = gps.satellites.value();
+	
+	// Attach to the XRF object
+	xrf.gps.setLatitude(latitude);
+	xrf.gps.setLongitude(longitude);
   }
   
   fix_age = gps.location.age();

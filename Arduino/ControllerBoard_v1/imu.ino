@@ -91,6 +91,10 @@ void getHeading() {
   if (!hasComms[3] || !hasComms[4]) {
     heading = 0;
     heading_nc = 0;
+	
+	// Now commit to the XRF object
+	xrf.imu.setHeading(heading);
+
     return;
   }  
   
@@ -113,6 +117,9 @@ void getHeading() {
   // Get the real heading
   heading = atan2(Yh, Xh);
   heading = RadiansToDegrees(heading);
+  
+  // Now commit to the XRF object
+  xrf.imu.setHeading(heading);
 }
 
 void getPitchRoll() {
@@ -130,6 +137,10 @@ void getPitchRoll() {
   // Now compute the degree version
   roll = roll_r * (180 / PI);
   pitch = pitch_r * (180 / PI);
+  
+  // Now commit to the XRF object
+	xrf.imu.setPitch(pitch);
+	xrf.imu.setRoll(roll);
 }
 
 double RadiansToDegrees(float rads) {

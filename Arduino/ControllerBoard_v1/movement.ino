@@ -10,53 +10,86 @@ move* accepts a value between -255 and 255 and either drives the track forward o
 #define RC_NEUTRAL_MIN 106
 
 #if defined(BRUSHED_DRIVE_METHOD)
-  void setLeft(int pwm_value) {
-     int pwm_actual = 0;
-     
-    // Above neutral zone, go forward
-    if (pwm_value > RC_NEUTRAL_MAX) {
-      digitalWrite(AIN1, HIGH);
-      digitalWrite(AIN2, LOW);
-      pwm_actual = map(pwm_value, RC_NEUTRAL_MAX, 255, DC_PWM_MIN, DC_PWM_MAX);
-    } else if (pwm_value < RC_NEUTRAL_MIN) {
-      digitalWrite(AIN1, LOW);
-      digitalWrite(AIN2, HIGH);
-      pwm_actual = map(pwm_value, 0, RC_NEUTRAL_MIN, DC_PWM_MAX, DC_PWM_MIN);
-    } else {
-      digitalWrite(AIN1, LOW);
-      digitalWrite(AIN2, LOW);
-      pwm_actual = 0;
-    }
-    
-    Serial.print("LEFT: ");
-    Serial.print(pwm_actual);
-    
-    analogWrite(PWMA, pwm_actual);
-  }
-  
-  void setRight(int pwm_value) {
-    int pwm_actual = 0;
-    
-    // Above neutral zone, go forward
-    if (pwm_value > RC_NEUTRAL_MAX) {
-      digitalWrite(BIN2, HIGH);
-      digitalWrite(BIN1, LOW);
-      pwm_actual = map(pwm_value, RC_NEUTRAL_MAX, 255, DC_PWM_MIN, DC_PWM_MAX);
-    } else if (pwm_value < RC_NEUTRAL_MIN) {
-      digitalWrite(BIN2, LOW);
-      digitalWrite(BIN1, HIGH);
-      pwm_actual = map(pwm_value, 0, RC_NEUTRAL_MIN, DC_PWM_MAX, DC_PWM_MIN);
-    } else {
-      digitalWrite(BIN1, LOW);
-      digitalWrite(BIN2, LOW);
-      pwm_actual = 0;
-    }
-    
-    Serial.print(" RIGHT: ");
-    Serial.println(pwm_actual);
-        
-    analogWrite(PWMB, pwm_actual);
-  }
+	// Accepts a value negative/positive 255, 0 is neutral
+	void setLeft(int value) {
+		// Set the XRF object data
+		xrf.movement.setRequestedSpeedLeft(value);
+	
+		int pwm_actual = 0;
+		
+		if (value > 0) {
+			// Forward
+			digitalWrite(AIN1, HIGH);
+			digitalWrite(AIN2, LOW);
+			
+			pwm_value = map(value, 0, 255, 0, 255);
+		} else if (value < 255) {
+			// Reverse
+			digitalWrite(AIN1, LOW);
+			digitalWrite(AIN2, HIGH);
+			
+			pwm_value = map(value, 0, -255, 0, 255);
+		} else {
+			// Stop
+			digitalWrite(AIN1, LOW);
+			digitalWrite(AIN2, LOW);
+			pwm_actual = 0;
+		}
+		
+		if (pwm_actual < DC_PWM_MIN) {
+			pwm_actual = 0;
+		}				
+		
+		// Set the XRF object data
+		if (value < 255) {
+			xrf.movement.setLiveSpeedLeft(-pwm_actual);
+		} else {
+			xrf.movement.setLiveSpeedLeft(pwm_actual);
+		}
+		
+		analogWrite(PWMA, pwm_actual);
+	}
+	
+	void setRight(int value) {
+		// Set the XRF object data
+		xrf.movement.setRequestedSpeedRight(value);
+		
+		int pwm_actual = 0;
+		
+		if (value > 0) {
+			// Forward
+			digitalWrite(BIN1, HIGH);
+			digitalWrite(BIN2, LOW);
+			
+			pwm_value = map(value, 0, 255, 0, 255);
+		} else if (value < 255) {
+			// Reverse
+			digitalWrite(BIN1, LOW);
+			digitalWrite(BIN2, HIGH);
+			
+			pwm_value = map(value, 0, -255, 0, 255);
+		} else {
+			// Stop
+			digitalWrite(BIN1, LOW);
+			digitalWrite(BIN2, LOW);
+			pwm_actual = 0;
+		}
+		
+		if (pwm_actual < DC_PWM_MIN) {
+			pwm_actual = 0;
+		}				
+		
+		// Set the XRF object data
+		if (value < 255) {
+			xrf.movement.setLiveSpeedRight(-pwm_actual);
+		} else {
+			xrf.movement.setLiveSpeedLeft(pwm_actual);
+		}
+		
+		analogWrite(PWMB, pwm_actual);
+	}
+
+
 #else
   void setLeft(int pwm_value) {
     left_pwm_value = map(pwm_value, -255, 255, 0, 180);

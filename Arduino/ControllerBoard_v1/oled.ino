@@ -4,6 +4,7 @@ void updateOLED() {
   drawVoltage();
   drawCompass();
   draw3D();
+  
   drawRC();
   display.display();
 }
@@ -25,6 +26,9 @@ void drawHeader() {
   // Add the clock in
   drawClock();
   
+  // Add the control mode
+  drawControlMode();
+  
   // Add the motor drive type
   drawMotorType();
   
@@ -37,8 +41,12 @@ void drawHeader() {
   // Add the data icon
   drawDataIcon();
 
-  // Draw the battery outline
+	// Add the battery icon + text
+	drawBattery();
+}
 
+void drawBattery() {
+ // Draw the battery outline
   display.drawLine(TL_BAT_X, TL_BAT_Y, TR_BAT_X, TL_BAT_Y, BLACK); // TOP
   display.drawLine(TL_BAT_X, TL_BAT_Y, TL_BAT_X, BR_BAT_Y, BLACK); // LEFT
   display.drawLine(TL_BAT_X, BR_BAT_Y, TR_BAT_X, BR_BAT_Y, BLACK); // BOTTOM
@@ -93,6 +101,16 @@ void drawHeader() {
   }
 }
 
+void drawControlMode() {
+	display.setCursor(53, 1);
+	display.setTextSize(1);
+	if (control_mode == rc) {
+		display.print("R");
+	} else {
+		display.print("X");
+	}
+}
+
 void drawMotorType() {
   display.setCursor(60, 1);
   display.setTextSize(1);
@@ -130,7 +148,7 @@ void drawSignalIcon() {
 }
 
 void drawDataIcon() {
-
+	// Placeholder for the time being
 }
 
 void drawVoltage() {
@@ -233,9 +251,12 @@ void drawRC() {
   display.setTextSize(1);
   
   display.setCursor(0, 55);
+  display.print("1:");
   display.print(c1);
-  display.setCursor(30, 55);
+  display.print(" 2:");
   display.print(c2);
-  display.setCursor(60, 55);
+  display.print(" 3:");
   display.print(c3);
+  display.print(" 4:");
+  dispaly.print(c4);
 }
