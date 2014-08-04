@@ -9,7 +9,7 @@
 #include <Time.h>
 #include "TinyGPS++.h"
 
-//#define BRUSHED_DRIVE_METHOD 1
+#define BRUSHED_DRIVE_METHOD 1
 
 #include "pins.h"
 #include "variables.h"
@@ -116,7 +116,6 @@ void setup() {
   display.setTextColor(WHITE);
   display.setCursor(15, 20);
   display.println("STARTING!");
-  display.println(millis());
   display.display();
   delay(1000);
 
@@ -134,13 +133,15 @@ void setup() {
 
 void loop() {
   ///////////////////// GET AND SET MOTOR DATA
-  
-  // Convert the RC channel values to 0-255 integers
-  int c1 = constrain(map(channel1, RC_MIN, RC_MAX, 0, 255), 0, 255);
-  int c2 = constrain(map(channel2, RC_MIN, RC_MAX, 0, 255), 0, 255);
-  int c3 = constrain(map(channel3, RC_MIN, RC_MAX, 0, 255), 0, 255);
-  int c4 = constrain(map(channel4, RC_MIN, RC_MAX, 0, 255), 0, 255);
-  
+  conformRC();
+  if (c3 > 100) {
+    setLeft(c1);
+    setRight(c2);
+  } else {
+    setLeft(128);
+    setRight(128);
+  } 
+    
   ////////////////////// GET SERIAL DATA
  
   // Get XRF data
@@ -179,13 +180,13 @@ void loop() {
     getHeading(); // Calculating heading
         
     // Debug the heading
-    Serial.print("Heading:\t");
-    Serial.print(heading_nc);
-    Serial.print(",");
-    Serial.print(heading);
-    Serial.print("\t");
-    Serial.print(right_pwm_value);
-    Serial.println();
+//    Serial.print("Heading:\t");
+//    Serial.print(heading_nc);
+//    Serial.print(",");
+//    Serial.print(heading);
+//    Serial.print("\t");
+//    Serial.print(right_pwm_value);
+//    Serial.println();
   }
 
   // Update the OLED, with 100ms, there will be a 10Hz refresh rate
@@ -196,14 +197,7 @@ void loop() {
 
   // Any debug operations
   if (debug_timer.poll(15)) {
-    // TESTING THE MAG WITH A SERVO
-    pwm_test += pwm_mod;
-    setRight(pwm_test);
-    if (pwm_test >= 255) {
-      pwm_mod = -1;
-    } else if (pwm_test <= -255) {
-      pwm_mod = 1;
-    }
+
   }
   
 

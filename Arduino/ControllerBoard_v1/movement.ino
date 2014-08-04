@@ -3,52 +3,59 @@ Actually drive the various motors depending on their type
 move* accepts a value between -255 and 255 and either drives the track forward or backward
 */
 
-#define DC_PWM_MIN 200
+#define DC_PWM_MIN 50
 #define DC_PWM_MAX 255
 
+#define RC_NEUTRAL_MAX 150
+#define RC_NEUTRAL_MIN 106
 
 #if defined(BRUSHED_DRIVE_METHOD)
-  // Convert the PWM value to positive and limited to motor turn on level
-  int pwmConverter(int pwm_value) {
-    int abs_pwm_value = abs(pwm_value);
-    
-//    if (abs_pwm_value < DC_PWM_MIN) {
-//      abs_pwm_value = 0;
-//    } else {
-      abs_pwm_value = map(abs_pwm_value, 0, 255, DC_PWM_MIN, DC_PWM_MAX);
-    //}
-    
-    return abs_pwm_value;
-  }
-
   void setLeft(int pwm_value) {
-    // If the PWM value is positive, we'll be clockwise
-    if (pwm_value > 0) {    
+     int pwm_actual = 0;
+     
+    // Above neutral zone, go forward
+    if (pwm_value > RC_NEUTRAL_MAX) {
       digitalWrite(AIN1, HIGH);
       digitalWrite(AIN2, LOW);
-    } else {
+      pwm_actual = map(pwm_value, RC_NEUTRAL_MAX, 255, DC_PWM_MIN, DC_PWM_MAX);
+    } else if (pwm_value < RC_NEUTRAL_MIN) {
       digitalWrite(AIN1, LOW);
       digitalWrite(AIN2, HIGH);
+      pwm_actual = map(pwm_value, 0, RC_NEUTRAL_MIN, DC_PWM_MAX, DC_PWM_MIN);
+    } else {
+      digitalWrite(AIN1, LOW);
+      digitalWrite(AIN2, LOW);
+      pwm_actual = 0;
     }
     
-    int pwm_out = pwmConverter(pwm_value);
+    Serial.print("LEFT: ");
+    Serial.print(pwm_actual);
     
-    Serial.println(pwm_out);
-    
-    analogWrite(PWMA, pwm_out);
+    analogWrite(PWMA, pwm_actual);
   }
   
   void setRight(int pwm_value) {
-    // If the PWM value is positive, we'll be clockwise
-    if (pwm_value > 0) {
-      digitalWrite(BIN1, HIGH);
+    int pwm_actual = 0;
+    
+    // Above neutral zone, go forward
+    if (pwm_value > RC_NEUTRAL_MAX) {
+      digitalWrite(BIN2, HIGH);
+      digitalWrite(BIN1, LOW);
+      pwm_actual = map(pwm_value, RC_NEUTRAL_MAX, 255, DC_PWM_MIN, DC_PWM_MAX);
+    } else if (pwm_value < RC_NEUTRAL_MIN) {
       digitalWrite(BIN2, LOW);
+      digitalWrite(BIN1, HIGH);
+      pwm_actual = map(pwm_value, 0, RC_NEUTRAL_MIN, DC_PWM_MAX, DC_PWM_MIN);
     } else {
       digitalWrite(BIN1, LOW);
-      digitalWrite(BIN2, HIGH);
+      digitalWrite(BIN2, LOW);
+      pwm_actual = 0;
     }
     
-    analogWrite(PWMB, pwmConverter(pwm_value));
+    Serial.print(" RIGHT: ");
+    Serial.println(pwm_actual);
+        
+    analogWrite(PWMB, pwm_actual);
   }
 #else
   void setLeft(int pwm_value) {

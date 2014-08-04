@@ -4,6 +4,7 @@ void updateOLED() {
   drawVoltage();
   drawCompass();
   draw3D();
+  drawRC();
   display.display();
 }
 
@@ -228,3 +229,13 @@ void draw3D() {
   display.print((int) pitch);
 }
 
+void drawRC() {
+  display.setTextSize(1);
+  
+  display.setCursor(0, 55);
+  display.print(c1);
+  display.setCursor(30, 55);
+  display.print(c2);
+  display.setCursor(60, 55);
+  display.print(c3);
+}

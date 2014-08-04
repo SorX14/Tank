@@ -16,6 +16,9 @@ uint16_t channel2_start;
 uint16_t channel3_start;
 uint16_t channel4_start;
 
+// Variables to hold the constrained RC values
+int c1, c2, c3, c4;
+
 // Motor variables
 int pwm_test;
 int pwm_mod = 1;
