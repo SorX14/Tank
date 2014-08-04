@@ -1,4 +1,4 @@
-## Voltage board ##
+## Power board ##
 
 This board takes the high voltage from the battery, and converts it into 3.3v, 5v, and 12v. Each voltage rail is monitored with a potentiometer acting as a voltage divider. The accuracy and range isn't as good as if opamps were used but it gives a ballpark figure. Each analog input has a capacitor on the back side to smooth out the readings slightly.
 
@@ -21,4 +21,9 @@ There are a few pins that are broken out diagonally next to the crystal.
 - **ATMEGA328P-AU** - TQFP-32 package - Farnell no: 1715486
 - **SMD crystal** - 16 Mhz TXC 7B-16.000MAAJ-T - Farnell no: 1841977
 - **Voltage regulators** - TRACOPOWER TSR 1-24120, TSR 1-2433, TSR 1-2450 - Farnell no: 1672130, 1696319, 1696320
-- **Potentiometer** - BOURNS 3266W-1-254LF - 250k 12turn, although the spec isn't important, only the footprint. 
+- **Potentiometer** - BOURNS 3266W-1-254LF - 250k 12turn, although the spec isn't important, only the footprint.
+
+### Resources ###
+
+- **PCB top** [https://github.com/SorX14/Tank/blob/master/PCB/Power%20board/top.png](https://github.com/SorX14/Tank/blob/master/PCB/Power%20board/top.png)
+- **PCB bottom** [https://github.com/SorX14/Tank/blob/master/PCB/Power%20board/bottom.png](https://github.com/SorX14/Tank/blob/master/PCB/Power%20board/bottom.png) 

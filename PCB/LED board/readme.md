@@ -24,3 +24,8 @@ There is a solder bridge up the top of the board that allows 2 boards to be prog
 ### Mistakes ###
 
 Rear silkscreen is mirrored.
+
+### Resources ###
+
+- **PCB top** [https://github.com/SorX14/Tank/blob/master/PCB/LED%20board/top.png](https://github.com/SorX14/Tank/blob/master/PCB/LED%20board/top.png)
+- **PCB bottom** [https://github.com/SorX14/Tank/blob/master/PCB/LED%20board/bottom.png](https://github.com/SorX14/Tank/blob/master/PCB/LED%20board/bottom.png)

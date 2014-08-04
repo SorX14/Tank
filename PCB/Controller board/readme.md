@@ -30,3 +30,8 @@ There are 2 'servo' outputs which will be used to control a RC car ESC.
 ### Mistakes ###
 
 The GPS header has the wrong silkscreen on it, so the GND and VCC are reversed. Most GPS units can handle reverse voltage, but double-check.
+
+### Resources ###
+
+- **PCB top** [https://github.com/SorX14/Tank/blob/master/PCB/Controller%20board/top.png](https://github.com/SorX14/Tank/blob/master/PCB/Controller%20board/top.png)
+- **PCB bottom** [https://github.com/SorX14/Tank/blob/master/PCB/Controller%20board/bottom.png](https://github.com/SorX14/Tank/blob/master/PCB/Controller%20board/bottom.png)
