@@ -12,6 +12,7 @@ void getGPS() {
 	// Attach to the XRF object
 	xrf.gps.setLatitude(latitude);
 	xrf.gps.setLongitude(longitude);
+	xrf.gps.setSatellites(satellites);
   }
   
   fix_age = gps.location.age();
@@ -24,6 +25,9 @@ void getGPS() {
 
   if (gps.speed.isUpdated()) {
     speed_mph = gps.speed.mph();
+	
+	// Attach to the XRF object
+	xrf.gps.setSpeed(speed_mph);
   }
 
   // Now we need to decide as to whether we have a fix or not

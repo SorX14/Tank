@@ -41,6 +41,7 @@ void getVoltage() {
       y++;
     }
     
+	// Get all of the ints from the bytes
      vin = (buffer[0] << 8) | buffer[1];
      v12 = (buffer[2] << 8) | buffer[3];
      v5 = (buffer[4] << 8) | buffer[5];
@@ -53,7 +54,6 @@ void getVoltage() {
 	xrf.voltage.setV12(v12);
 	xrf.voltage.setVIN(vin);
 	xrf.voltage.setBatPercent(percent);
-	 
   }
 }
 
@@ -66,7 +66,7 @@ uint8_t* readDevice (int I2CAddress, int address, int length) {
   return readDevice(I2CAddress, length);
 }
 
-// Read a device - now better matches the readVoltageSlim method
+// Read a device
 uint8_t* readDevice (int I2CAddress, int length) {
   Wire.requestFrom(I2CAddress, length);
 

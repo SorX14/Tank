@@ -5,7 +5,8 @@ void updateOLED() {
   drawCompass();
   draw3D();
   
-  drawRC();
+  //drawRC();
+  drawFramerate();
   display.display();
 }
 
@@ -237,6 +238,7 @@ void drawCompass() {
   display.print((int) heading);
 }
 
+// Draw the roll and pitch lines
 void draw3D() {
   display.setTextSize(1);
 
@@ -247,6 +249,7 @@ void draw3D() {
   display.print((int) pitch);
 }
 
+// Draw the RC counters
 void drawRC() {
   display.setTextSize(1);
   
@@ -258,5 +261,12 @@ void drawRC() {
   display.print(" 3:");
   display.print(c3);
   display.print(" 4:");
-  dispaly.print(c4);
+  display.print(c4);
+}
+
+// Draw framerate
+void drawFramerate() {
+	display.setTextSize(1);
+	display.setCursor(0, 55);
+	display.print(framerate);
 }

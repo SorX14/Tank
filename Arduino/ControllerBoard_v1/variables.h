@@ -3,6 +3,9 @@
 
 #include <Arduino.h>
 
+// Framerate
+unsigned long framerate;
+
 // Variables to hold all RC channels
 volatile uint16_t channel1;
 volatile uint16_t channel2;
@@ -23,11 +26,12 @@ int c1, c2, c3, c4;
 // Motor variables
 int left_pwm_value;
 int right_pwm_value;
+bool parking_brake; // If true, the unit cannot move
 
 // Control mode
 enum ControlTypes {
 	rc,
-	xrf
+	xrf_radio
 };
 ControlTypes control_mode = rc;
 
@@ -38,6 +42,10 @@ bool hasComms[6];
 unsigned int vin, v12, v5, v33, percent;
 
 // IMU
+// Magnetic declination: -1o 52' WEST (GL22BD)
+// -1 degrees 52 minutes to radians (Google to get radians conversion)
+const float declinationAngle = -0.0325794794;
+
 float guass_scale = 0.92;		// Guass scaling
 float g_scale = 0.0039; 			// G scaling
 

@@ -69,6 +69,9 @@ void setup() {
 
   delay(1000);
   Serial.println("STARTING...");
+  
+  // Setup the XRF radio library
+  xrf.init(Serial1);
 
   // Start the I2C interface
   Wire.begin();
@@ -139,15 +142,19 @@ void loop() {
   ///////////////////// GET AND SET MOTOR DATA
 
   if (control_mode == rc) { 
-    // RC control
+    // Conform the incoming RC signals
     conformRC();
-    if (c3 > 50) { // A toggle switch (0 = off, 255 = on)
-		setLeft(c1);
-		setRight(c2);
-    } else {
-      setLeft(0);
-      setRight(0);
-    }
+	
+	// c3 is a toggle switch
+	if (c3 > 50) {
+		setParkingBrake(true);
+	} else {
+		setParkingBrake(false);
+	}
+	
+	// Set the left and right motors
+	setLeft(c1);
+	setRight(c2);
   } else {
     // XRF control
 	setLeft(xrf.movement.incoming_left);
@@ -196,9 +203,11 @@ void loop() {
   /////////////////////// UPDATE OLED
 
   // Update the OLED, with 100ms, there will be a 10Hz refresh rate
-  if (oled_timer.poll(100)) {
+  if (oled_timer.poll(100)) {  
     // Update the screen
     updateOLED();
+	
+	framerate = 0;
   }
 
   // Any debug operations
@@ -207,8 +216,10 @@ void loop() {
   }
   
   // Send the current status back to the base unit @ 40hz
-  if (xrf_timer.poll(25)) {  
-	xrf.send();
+  if (xrf_timer.poll(250)) {  
+    xrf.send();
   }
+  
+  framerate++;
 }
 
