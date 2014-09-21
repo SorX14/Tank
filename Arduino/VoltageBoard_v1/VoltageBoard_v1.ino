@@ -17,6 +17,7 @@
 #define A12V   A1
 #define A5V    A2
 #define A33V   A3
+#define CURRENT A6
 
 // Setup the calibration values
 #define CAL_VIN 0.046667
@@ -33,7 +34,7 @@ MilliTimer voltage_flash;
 const float alpha = 0.1;
 unsigned long r_v12, r_v5, r_v33, r_vin;
 //volatile unsigned long v12, v5, v33, vin;
-volatile unsigned int v12, v5, v33, vin;
+volatile unsigned int v12, v5, v33, vin, current;
 volatile byte percent = 0;
 
 void setup() {
@@ -55,6 +56,7 @@ void setup() {
   pinMode(A12V, INPUT);
   pinMode(A5V, INPUT);
   pinMode(A33V, INPUT);
+  pinMode(CURRENT, INPUT);
 
   // Start the I2C interface
   Wire.begin(I2CID);
@@ -85,7 +87,7 @@ void loop() {
 
 void requestEvent() {
   // Output VIN, 12v, 5v, 3.3v and percent battery
-  byte sendBuffer[9];
+  byte sendBuffer[11];
   
   sendBuffer[0] = highByte(vin);
   sendBuffer[1] = lowByte(vin);
@@ -95,9 +97,11 @@ void requestEvent() {
   sendBuffer[5] = lowByte(v5);
   sendBuffer[6] = highByte(v33);
   sendBuffer[7] = lowByte(v33);
-  sendBuffer[8] = percent;
+  sendBuffer[8] = highByte(current);
+  sendBuffer[9] = lowByte(current);
+  sendBuffer[10] = percent;
 
-  Wire.write(sendBuffer, 9);
+  Wire.write(sendBuffer, 11);
 }
 
 void receiveEvent(int in_length) {

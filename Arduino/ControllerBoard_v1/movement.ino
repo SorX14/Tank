@@ -12,10 +12,10 @@ Actually drive the various motors depending on their type
 #if defined(BRUSHED_DRIVE_METHOD)
 
 void setParkingBrake(bool position) {
-	parking_brake = position;
-	
-	// Update the XRF object
-	xrf.movement.setParkingBrake(position);
+  parking_brake = position;
+
+  // Update the XRF object
+  xrf.movement.setParkingBrake(position);
 }
 
 // Accepts a value negative/positive 255, 0 is neutral
@@ -31,13 +31,15 @@ void setLeft(int value) {
     digitalWrite(AIN2, LOW);
 
     pwm_actual = map(value, 0, 255, 0, 255);
-  } else if (value < 255) {
+  } 
+  else if (value < 255) {
     // Reverse
     digitalWrite(AIN1, LOW);
     digitalWrite(AIN2, HIGH);
 
     pwm_actual = map(value, 0, -255, 0, 255);
-  } else {
+  } 
+  else {
     // Stop
     digitalWrite(AIN1, LOW);
     digitalWrite(AIN2, LOW);
@@ -53,7 +55,8 @@ void setLeft(int value) {
   // Set the XRF object data
   if (value < 0) {
     xrf.movement.setLiveSpeedLeft(-pwm_actual);
-  } else {
+  } 
+  else {
     xrf.movement.setLiveSpeedLeft(pwm_actual);
   }
 
@@ -72,13 +75,15 @@ void setRight(int value) {
     digitalWrite(BIN1, LOW);
 
     pwm_actual = map(value, 0, 255, 0, 255);
-  } else if (value < 255) {
+  } 
+  else if (value < 255) {
     // Reverse
     digitalWrite(BIN2, LOW);
     digitalWrite(BIN1, HIGH);
 
     pwm_actual = map(value, 0, -255, 0, 255);
-  } else {
+  } 
+  else {
     // Stop
     digitalWrite(BIN1, LOW);
     digitalWrite(BIN2, LOW);
@@ -94,7 +99,8 @@ void setRight(int value) {
   // Set the XRF object data
   if (value < 0) {
     xrf.movement.setLiveSpeedRight(-pwm_actual);
-  } else {
+  } 
+  else {
     xrf.movement.setLiveSpeedRight(pwm_actual);
   }
 
@@ -104,15 +110,48 @@ void setRight(int value) {
 
 #else
 void setLeft(int pwm_value) {
+  xrf.movement.setRequestedSpeedLeft(pwm_value);
   left_pwm_value = map(pwm_value, -255, 255, 0, 180);
 
-  left.write(left_pwm_value);
+  xrf.movement.setLiveSpeedLeft(left_pwm_value);
+  //  left.write(left_pwm_value);
+  writeLeft(left_pwm_value);
 }
 
 void setRight(int pwm_value) {
+  xrf.movement.setRequestedSpeedRight(pwm_value);
   right_pwm_value = map(pwm_value, -255, 255, 0, 180);
 
-  right.write(right_pwm_value);
+  xrf.movement.setLiveSpeedRight(right_pwm_value);
+  //  right.write(right_pwm_value);
+  writeRight(right_pwm_value);
+}
+
+void setParkingBrake(bool position) {
+  parking_brake = position;
+
+  // Update the XRF object
+  xrf.movement.setParkingBrake(position);
+}
+
+void writeLeft(int pwm_value) {
+  if (parking_brake) {
+    a = 90;
+  }
+
+  //  int a = map(pwm_value, 0, 180, ESC_MIN, ESC_MAX);  
+  int a = map(pwm_value, 180, 0, ESC_MIN, ESC_MAX); // Invert while testing
+  left.writeMicroseconds(a);
+}
+
+void writeRight(int pwm_value) {
+  if (parking_brake) {
+    a = 90;
+  }
+
+  int a = map(pwm_value, 0, 180, ESC_MIN, ESC_MAX);
+  right.writeMicroseconds(a);
 }
 #endif
+
 

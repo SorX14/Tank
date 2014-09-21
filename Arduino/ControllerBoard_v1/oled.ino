@@ -4,7 +4,7 @@ void updateOLED() {
   drawVoltage();
   drawCompass();
   draw3D();
-  
+
   //drawRC();
   drawFramerate();
   display.display();
@@ -23,31 +23,31 @@ void drawHeader() {
 
   // Inverted text
   display.setTextColor(BLACK, WHITE);
-  
+
   // Add the clock in
   drawClock();
-  
+
   // Add the control mode
   drawControlMode();
-  
+
   // Add the motor drive type
   drawMotorType();
-  
+
   // Add the signal
   drawSignalIcon();
-  
+
   // Add the GPS fix icon
   drawGPSIcon();
 
   // Add the data icon
   drawDataIcon();
 
-	// Add the battery icon + text
-	drawBattery();
+  // Add the battery icon + text
+  drawBattery();
 }
 
 void drawBattery() {
- // Draw the battery outline
+  // Draw the battery outline
   display.drawLine(TL_BAT_X, TL_BAT_Y, TR_BAT_X, TL_BAT_Y, BLACK); // TOP
   display.drawLine(TL_BAT_X, TL_BAT_Y, TL_BAT_X, BR_BAT_Y, BLACK); // LEFT
   display.drawLine(TL_BAT_X, BR_BAT_Y, TR_BAT_X, BR_BAT_Y, BLACK); // BOTTOM
@@ -103,23 +103,24 @@ void drawBattery() {
 }
 
 void drawControlMode() {
-	display.setCursor(53, 1);
-	display.setTextSize(1);
-	if (control_mode == rc) {
-		display.print("R");
-	} else {
-		display.print("X");
-	}
+  display.setCursor(53, 1);
+  display.setTextSize(1);
+  if (control_mode == rc) {
+    display.print("R");
+  } 
+  else {
+    display.print("X");
+  }
 }
 
 void drawMotorType() {
   display.setCursor(60, 1);
   display.setTextSize(1);
-  #if defined(BRUSHED_DRIVE_METHOD)
-    display.print("D");
-  #else
-    display.print("E");
-  #endif
+#if defined(BRUSHED_DRIVE_METHOD)
+  display.print("D");
+#else
+  display.print("E");
+#endif
 }
 
 void drawGPSIcon() {
@@ -149,7 +150,7 @@ void drawSignalIcon() {
 }
 
 void drawDataIcon() {
-	// Placeholder for the time being
+  // Placeholder for the time being
 }
 
 void drawVoltage() {
@@ -220,7 +221,7 @@ void drawCompass() {
   if (heading_int > 360) {
     heading_int -= 360;
   }
-  
+
   // Reverse the reading
   heading_int = map(heading_int, 0, 360, 360, 0);
 
@@ -231,7 +232,7 @@ void drawCompass() {
 
   // Draw the compass line
   display.drawLine(compass_x, compass_y, end_x, end_y, WHITE);
-  
+
   // Add the 2 headings
   display.setCursor(110, 37);
   display.setTextSize(1);
@@ -244,7 +245,7 @@ void draw3D() {
 
   display.setCursor(110, 17);
   display.print((int) roll);
-  
+
   display.setCursor(110, 27);
   display.print((int) pitch);
 }
@@ -252,7 +253,7 @@ void draw3D() {
 // Draw the RC counters
 void drawRC() {
   display.setTextSize(1);
-  
+
   display.setCursor(0, 55);
   display.print("1:");
   display.print(c1);
@@ -266,7 +267,13 @@ void drawRC() {
 
 // Draw framerate
 void drawFramerate() {
-	display.setTextSize(1);
-	display.setCursor(0, 55);
-	display.print(framerate);
+  display.setTextSize(1);
+  display.setCursor(0, 55);
+  display.print(framerate);
+  
+  display.print(" ");
+  display.print(channel1);
+  display.print(" ");
+  display.print(c1);
 }
+

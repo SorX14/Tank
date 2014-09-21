@@ -3,7 +3,7 @@ void RCchannel1 () {
   if (digitalRead(RC1PIN)) {
     channel1_start = micros();
   } else {
-    channel1 = (uint16_t) (micros() - channel1_start);
+    channel1 = (micros() - channel1_start);
   }
 }
 
@@ -11,7 +11,7 @@ void RCchannel2 () {
   if (digitalRead(RC2PIN)) {
     channel2_start = micros();
   } else {
-    channel2 = (uint16_t) (micros() - channel2_start);
+    channel2 = (micros() - channel2_start);
   }
 }
 
@@ -19,19 +19,21 @@ void RCchannel3 () {
   if (digitalRead(RC3PIN)) {
     channel3_start = micros();
   } else {
-    channel3 = (uint16_t) (micros() - channel3_start);
+    channel3 = (micros() - channel3_start);
   }
 }
 void RCchannel4 () {
   if (digitalRead(RC4PIN)) {
     channel4_start = micros();
   } else {
-    channel4 = (uint16_t) (micros() - channel4_start);
+    channel4 = (micros() - channel4_start);
   }
 }
 
 void resetTeensy() {
-  Serial.println("RESET TEENSY");
+  Serial1.println("RESET TEENSY");
+  Serial1.flush();
+
   CPU_RESTART
 }
 

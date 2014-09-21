@@ -1,4 +1,8 @@
 void readVoltages() {
+	// Change to the internal (1.1V) reference, and wait for the readings to settle
+ 	analogReference(INTERNAL);
+	delay(10);
+	
   analogRead(AVIN);
   delay(5);
   r_vin = ((analogRead(AVIN) * (1100/1023.0))) / CAL_VIN;
@@ -21,6 +25,20 @@ void readVoltages() {
   v5 = r_v5 * alpha + (v5 * (1.0 - alpha));
   v33 = r_v33 * alpha + (v33 * (1.0 - alpha));
 }
+
+void readCurrent() {
+	// Change to the 'default' reference as the current sensors works with VCC/2 as the
+	// base line
+	analogReference(DEFAULT);
+	delay(10);
+	
+	analogRead(CURRENT);
+	delay(5);
+	
+	// Get the millivolt reading
+	current = (analogRead(CURRENT) - 512) * 3300 / 1023.0 / 0.04 - 0.04;
+}
+	
 
 void outputVoltage() { 
   if (vin > 20150) {

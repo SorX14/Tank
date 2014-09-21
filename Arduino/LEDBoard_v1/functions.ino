@@ -12,7 +12,8 @@ static void setLEDs() {
 static void useRamp (const void* ptr) {
   const Ramp* ramp = (const Ramp*) ptr;
   
-  duration = ramp->steps * 100;
+  nextRamp = ramp->chain;
+  duration = ramp->steps * 10;
   for (byte i = 0; i < 3; ++i) {
     long target = (long) ramp->colors[i] << 23;
     if (duration > 0) {
@@ -22,4 +23,10 @@ static void useRamp (const void* ptr) {
     }
   }
   setLEDs();
+}
+
+static void loadRamp (byte pos) {
+  Ramp ramp;
+  ramp = stdRamps[pos];
+  useRamp(&ramp);
 }

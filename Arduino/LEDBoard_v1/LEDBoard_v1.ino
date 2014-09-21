@@ -25,13 +25,23 @@
 typedef struct {
   byte colors[3];
   byte steps;
+  byte chain;
 } Ramp;
+
+static Ramp stdRamps[] = {
+  {0, 0, 0, 0, 0}, // 0: instant off
+  {255, 0, 0, 5, 2}, // 1: red .5s -> 2
+  {0, 0, 0, 5, 1}, // 2: black .5s -> 1
+  {0, 255, 0, 10, 4}, // 3: green 1s -> 4
+  {0, 0, 0, 10, 3}, // 4
+};
 
 // Variables
 int I2C_id;  // The I2C device ID
 long now[3]; // Shamelessly stolen from JeeNodes LED
 long delta[3];
 word duration;
+byte nextRamp;
 volatile uint8_t hascomms = 0; // Whether this unit has communication with the host
 
 MilliTimer timer;
@@ -47,7 +57,7 @@ void setup() {
   pinMode(RLED, OUTPUT);
   pinMode(GLED, OUTPUT);
   pinMode(BLED, OUTPUT);
-  pinMode(I2CID, INPUT_PULLUP); // Use a pinup to make sure its 3.3v, until its bridged
+  pinMode(I2CID, INPUT_PULLUP); // Use a pullup to make sure its 3.3v, until its bridged
   
   // Testing
   //digitalWrite(DEBUGLED, HIGH);
@@ -56,8 +66,9 @@ void setup() {
   bitSet(TCCR1B, WGM12);
   
   // Set the LED's up with R0 G0 B0 actioned immediately
-  byte a[4] = { 0, 0, 0, 0 };
+  byte a[5] = { 0, 0, 100, 0, 0 };
   useRamp((const Ramp*) a);
+  //loadRamp(3);
   
   // Determine I2C ID
   if (digitalRead(I2CID)) {
@@ -95,6 +106,8 @@ void loop() {
         now[i] += delta[i];
       }
       setLEDs();
+    } else if (nextRamp != 0) {
+      loadRamp(nextRamp);
     }
   }
 }
@@ -112,7 +125,7 @@ void receiveEvent(int in_length) {
     hascomms = 1;
   } else {
     int i = 0;
-    byte led_pattern[4];
+    byte led_pattern[5];
     while (Wire.available()) {
       byte c = Wire.read();
       led_pattern[i] = c;
